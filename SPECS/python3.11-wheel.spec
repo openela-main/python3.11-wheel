@@ -21,7 +21,7 @@
 
 Name:           python%{python3_pkgversion}-%{pypi_name}
 Version:        0.38.4
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Built-package format for Python
 
 # packaging is ASL 2.0 or BSD
@@ -119,7 +119,7 @@ rm setup.cfg  # to drop pytest coverage options configured there
 %endif
 
 %post -n python%{python3_pkgversion}-%{pypi_name}
-alternatives --keep-foreign --add-slave python3 %{_bindir}/python%{python3_version} \
+alternatives --add-slave python3 %{_bindir}/python%{python3_version} \
     %{_bindir}/%{pypi_name}-3 \
     %{pypi_name}-3 \
     %{_bindir}/%{pypi_name}-%{python3_version}
@@ -127,7 +127,7 @@ alternatives --keep-foreign --add-slave python3 %{_bindir}/python%{python3_versi
 %postun -n python%{python3_pkgversion}-%{pypi_name}
 # Do this only during uninstall process (not during update)
 if [ $1 -eq 0 ]; then
-   alternatives --remove-slave python3 %{_bindir}/python%{python3_version} \
+   alternatives --keep-foreign --remove-slave python3 %{_bindir}/python%{python3_version} \
        %{pypi_name}-3
 fi
 
@@ -152,6 +152,10 @@ fi
 %endif
 
 %changelog
+* Fri Apr 21 2023 Lumír Balhar <lbalhar@redhat.com> - 0.38.4-4
+- Fix alternatives scriptlets
+Resolves: RHEL-372
+
 * Wed Feb 01 2023 Charalampos Stratakis <cstratak@redhat.com> - 0.38.4-3
 - Explicitly require the python3.11-rpm-macros
 
